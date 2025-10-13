@@ -14,7 +14,7 @@ export class SpotifyRepository implements SongRepository {
   async searchByArtist(artist: string): Promise<Song[]> {
     const { data } = await firstValueFrom(
       this.httpService.get<SpotifyTrackResponse>(
-        'https://api.spotify.com/v1/search',
+        Environment.SPOTIFY_SEARCH_URL,
         {
           params: { q: artist, type: 'track', limit: 5 },
           headers: {

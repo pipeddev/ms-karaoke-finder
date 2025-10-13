@@ -1,3 +1,4 @@
+import { Constants } from 'src/constant';
 import { Song } from '../../domain/entities/song.entity';
 import { SpotifyTrackResponse } from './dto/spotify-track.dto';
 
@@ -10,7 +11,8 @@ export class SpotifyMapper {
           track.name,
           track.artists[0]?.name ?? 'Unknown Artist',
           track.album.name,
-          track.album.images.find((img) => img.width === 64)?.url ?? undefined,
+          track.album.images.find((img) => img.width === Constants.WIDTH_IMAGE)
+            ?.url ?? undefined,
         ),
     );
   }
