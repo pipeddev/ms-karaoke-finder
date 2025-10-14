@@ -23,7 +23,6 @@ export class AppLogger implements LoggerService {
       ...(trace && { trace }),
     };
 
-    // Cloud Logging parsea JSON automáticamente
     console[level === 'error' ? 'error' : 'log'](JSON.stringify(log));
   }
 
