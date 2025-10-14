@@ -13,10 +13,10 @@ export const Environment = {
     process.env.SPOTIFY_TOKEN_URL ?? 'https://accounts.spotify.com/api/token',
   SPOTIFY_SEARCH_URL:
     process.env.SPOTIFY_SEARCH_URL ?? 'https://api.spotify.com/v1/search',
-  SPOTIFY_ACCESS_TOKEN: process.env.SPOTIFY_ACCESS_TOKEN ?? '',
 
   // Redis (Upstash)
   UPSTASH_REDIS_URL: process.env.UPSTASH_REDIS_URL ?? '',
+  UPSTASH_REDIS_TOKEN: process.env.UPSTASH_REDIS_TOKEN!,
   UPSTASH_REDIS_TTL_SECONDS: +(process.env.UPSTASH_REDIS_TTL_SECONDS ?? 3600),
 
   // JWT (Auth)
