@@ -42,7 +42,7 @@ export class SpotifyService {
 
     const { access_token, expires_in } = response.data;
 
-    await this.redisCache.set(cacheKey, access_token, expires_in - 60); // un margen de 1 min
+    await this.redisCache.set(cacheKey, access_token, expires_in - 60);
     return access_token;
   }
 }
