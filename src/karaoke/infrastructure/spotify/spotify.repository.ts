@@ -16,7 +16,7 @@ export class SpotifyRepository implements SongRepository {
       this.httpService.get<SpotifyTrackResponse>(
         Environment.SPOTIFY_SEARCH_URL,
         {
-          params: { q: artist, type: 'track', limit: 5 },
+          params: { q: encodeURIComponent(artist), type: 'track', limit: 5 },
           headers: {
             Authorization: `Bearer ${Environment.SPOTIFY_ACCESS_TOKEN}`,
           },
