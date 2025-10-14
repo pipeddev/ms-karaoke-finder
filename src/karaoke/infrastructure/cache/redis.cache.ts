@@ -32,7 +32,6 @@ export class RedisCache {
       this.logger.error(
         `Error setting key ${key}: ${error instanceof Error ? error.message : String(error)}`,
       );
-      throw error;
     }
   }
 
