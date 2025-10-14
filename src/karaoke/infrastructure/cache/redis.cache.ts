@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { Redis } from '@upstash/redis';
 import { Environment } from 'src/shared/config/environment';
+import { AppLogger } from 'src/shared/utils/logger/logger';
 
 @Injectable()
 export class RedisCache {
   private client: Redis;
 
-  constructor() {
+  constructor(private readonly logger: AppLogger) {
     this.client = new Redis({
       url: Environment.UPSTASH_REDIS_URL,
-      token: Environment.UPSTASH_REDIS_TOKEN, // Necesitarás agregar esto a tu Environment
+      token: Environment.UPSTASH_REDIS_TOKEN,
     });
   }
 
@@ -17,7 +18,9 @@ export class RedisCache {
     try {
       return await this.client.get(key);
     } catch (error) {
-      console.error(`Error getting key ${key}:`, error);
+      this.logger.error(
+        `Error getting key ${key}: ${error instanceof Error ? error.message : String(error)}`,
+      );
       return null;
     }
   }
@@ -26,7 +29,9 @@ export class RedisCache {
     try {
       await this.client.set(key, value, { ex: ttlSeconds });
     } catch (error) {
-      console.error(`Error setting key ${key}:`, error);
+      this.logger.error(
+        `Error setting key ${key}: ${error instanceof Error ? error.message : String(error)}`,
+      );
       throw error;
     }
   }
@@ -35,7 +40,9 @@ export class RedisCache {
     try {
       await this.client.del(key);
     } catch (error) {
-      console.error(`Error deleting key ${key}:`, error);
+      this.logger.error(
+        `Error deleting key ${key}: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 }

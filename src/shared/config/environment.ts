@@ -16,7 +16,7 @@ export const Environment = {
 
   // Redis (Upstash)
   UPSTASH_REDIS_URL: process.env.UPSTASH_REDIS_URL ?? '',
-  UPSTASH_REDIS_TOKEN: process.env.UPSTASH_REDIS_TOKEN!,
+  UPSTASH_REDIS_TOKEN: process.env.UPSTASH_REDIS_TOKEN ?? '',
   UPSTASH_REDIS_TTL_SECONDS: +(process.env.UPSTASH_REDIS_TTL_SECONDS ?? 3600),
 
   // JWT (Auth)

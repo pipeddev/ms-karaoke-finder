@@ -1,16 +1,16 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { RedisCache } from '../cache/redis.cache';
 import { Environment } from '../../../shared/config/environment';
 import { firstValueFrom } from 'rxjs';
+import { AppLogger } from 'src/shared/utils/logger/logger';
 
 @Injectable()
 export class SpotifyService {
-  private readonly logger = new Logger(SpotifyService.name);
-
   constructor(
     private readonly httpService: HttpService,
     private readonly redisCache: RedisCache,
+    private readonly logger: AppLogger,
   ) {}
 
   async getAccessToken(): Promise<string> {
