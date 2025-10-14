@@ -16,14 +16,12 @@ export class SpotifyService {
   async getAccessToken(): Promise<string> {
     const cacheKey = 'spotify:access_token';
 
-    // 1️⃣ Verificar si ya hay un token en Redis
     const cachedToken = await this.redisCache.get(cacheKey);
     if (cachedToken) {
       this.logger.debug('Using cached Spotify token');
       return cachedToken;
     }
 
-    // 2️⃣ Pedir nuevo token a Spotify
     this.logger.debug('Fetching new Spotify token...');
     const auth = Buffer.from(
       `${Environment.SPOTIFY_CLIENT_ID}:${Environment.SPOTIFY_CLIENT_SECRET}`,
@@ -44,7 +42,6 @@ export class SpotifyService {
 
     const { access_token, expires_in } = response.data;
 
-    // 3️⃣ Guardar token en Redis por su duración
     await this.redisCache.set(cacheKey, access_token, expires_in - 60); // un margen de 1 min
     return access_token;
   }
