@@ -28,7 +28,6 @@ export class JSendInterceptor<T>
           typeof data === 'object' &&
           data !== null &&
           'status' in data &&
-          'status' in (data as object) &&
           ['success', 'fail', 'error'].includes(
             String((data as { status?: unknown })?.status),
           )
