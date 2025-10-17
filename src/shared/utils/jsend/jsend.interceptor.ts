@@ -7,11 +7,7 @@ import {
 import { Observable, map } from 'rxjs';
 import { JSend } from './jsend';
 import { JSendResponse } from './jsend-response';
-
-interface FastifyReply {
-  header(name: string, value: string): FastifyReply;
-  getHeader(name: string): string | string[] | undefined;
-}
+import { HttpReplyLike } from '../http/http-reply-like.interface';
 
 @Injectable()
 export class JSendInterceptor<T>
@@ -26,7 +22,7 @@ export class JSendInterceptor<T>
       return next.handle() as Observable<JSendResponse<T>>;
     }
 
-    const reply = context.switchToHttp().getResponse<FastifyReply>();
+    const reply = context.switchToHttp().getResponse<HttpReplyLike>();
 
     return next.handle().pipe(
       map((data: T) => {
@@ -41,15 +37,45 @@ export class JSendInterceptor<T>
           return data as unknown as JSendResponse<T>;
         }
 
-        if (reply?.header && reply?.getHeader) {
+        // Feature detection for setting headers
+        if (this.canSetHeaders(reply)) {
           const existingContentType = reply.getHeader('content-type');
           if (!existingContentType) {
             reply.header('Content-Type', 'application/json; charset=utf-8');
           }
         }
 
+        // Handle special status codes
+        if (this.canSetStatusCode(reply)) {
+          const statusCode = reply.statusCode;
+          if (statusCode === 204 || statusCode === 304) {
+            // Don't wrap 204 No Content or 304 Not Modified responses
+            return data as unknown as JSendResponse<T>;
+          }
+        }
+
         return JSend.success(data);
       }),
+    );
+  }
+
+  private canSetHeaders(reply: unknown): reply is HttpReplyLike {
+    return (
+      typeof reply === 'object' &&
+      reply !== null &&
+      'header' in reply &&
+      'getHeader' in reply &&
+      typeof (reply as { header?: unknown }).header === 'function' &&
+      typeof (reply as { getHeader?: unknown }).getHeader === 'function'
+    );
+  }
+
+  private canSetStatusCode(reply: unknown): reply is HttpReplyLike {
+    return (
+      typeof reply === 'object' &&
+      reply !== null &&
+      'statusCode' in reply &&
+      typeof (reply as { statusCode?: unknown }).statusCode === 'number'
     );
   }
 }

@@ -67,8 +67,8 @@ export class JSendExceptionFilter implements ExceptionFilter {
       // Registrar errores inesperados con más detalle
       this.logger.error(
         `Ocurrió un error inesperado: ${errorMessage}` +
-          (exception && typeof exception === 'object'
-            ? ` | Detalles: ${JSON.stringify(exception)}`
+          (exception instanceof Error
+            ? ` | Detalles: name=${exception.name}, message=${exception.message}`
             : ''),
         exception instanceof Error ? exception.stack : undefined,
         JSendExceptionFilter.name,
