@@ -65,14 +65,14 @@ export class JSendExceptionFilter implements ExceptionFilter {
       jsendResponse = JSend.error(errorMessage, status, errorData);
 
       // Registrar errores inesperados con más detalle
-      this.logger.error('Ocurrió un error inesperado:', {
-        message: errorMessage,
-        stack:
-          exception instanceof Error
-            ? exception.stack
-            : 'No hay stack trace disponible',
-        exception,
-      });
+      this.logger.error(
+        `Ocurrió un error inesperado: ${errorMessage}` +
+          (exception && typeof exception === 'object'
+            ? ` | Detalles: ${JSON.stringify(exception)}`
+            : ''),
+        exception instanceof Error ? exception.stack : undefined,
+        JSendExceptionFilter.name,
+      );
     }
 
     response.status(status).send(jsendResponse);

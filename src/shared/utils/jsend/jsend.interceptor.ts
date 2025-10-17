@@ -10,6 +10,7 @@ import { JSendResponse } from './jsend-response';
 
 interface FastifyReply {
   header(name: string, value: string): FastifyReply;
+  getHeader(name: string): string | string[] | undefined;
 }
 
 @Injectable()
@@ -20,6 +21,11 @@ export class JSendInterceptor<T>
     context: ExecutionContext,
     next: CallHandler<T>,
   ): Observable<JSendResponse<T>> {
+    // Guard: Skip non-HTTP contexts (GraphQL, WebSocket, etc.)
+    if (context.getType() !== 'http') {
+      return next.handle() as Observable<JSendResponse<T>>;
+    }
+
     const reply = context.switchToHttp().getResponse<FastifyReply>();
 
     return next.handle().pipe(
@@ -35,8 +41,11 @@ export class JSendInterceptor<T>
           return data as unknown as JSendResponse<T>;
         }
 
-        if (reply?.header) {
-          reply.header('Content-Type', 'application/json; charset=utf-8');
+        if (reply?.header && reply?.getHeader) {
+          const existingContentType = reply.getHeader('content-type');
+          if (!existingContentType) {
+            reply.header('Content-Type', 'application/json; charset=utf-8');
+          }
         }
 
         return JSend.success(data);
