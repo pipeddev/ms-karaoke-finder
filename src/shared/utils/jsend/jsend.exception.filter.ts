@@ -48,7 +48,7 @@ export class JSendExceptionFilter implements ExceptionFilter {
         // Errores de servidor - respuesta 'error'
         jsendResponse = JSend.error(
           exception.message || 'Internal Server Error',
-          undefined,
+          status,
           { statusCode: status },
         );
       }

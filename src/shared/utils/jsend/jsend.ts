@@ -40,8 +40,8 @@ export class JSend {
     return {
       status: 'error',
       message,
-      ...(code !== undefined && { code }),
-      ...(data !== undefined && { data }),
+      ...(code !== undefined ? { code } : {}),
+      ...(data !== undefined ? { data } : {}),
     };
   }
 }
