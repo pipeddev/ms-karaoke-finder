@@ -3,14 +3,14 @@ import { HttpService } from '@nestjs/axios';
 import { RedisCache } from '../cache/redis.cache';
 import { Environment } from '../../../shared/config/environment';
 import { firstValueFrom } from 'rxjs';
-import { AppLogger } from 'src/shared/utils/logger/logger';
+import { LoggerHelper } from 'src/shared/logger/logger';
 
 @Injectable()
 export class SpotifyService {
+  private readonly logger = new LoggerHelper(SpotifyService.name);
   constructor(
     private readonly httpService: HttpService,
     private readonly redisCache: RedisCache,
-    private readonly logger: AppLogger,
   ) {}
 
   async getAccessToken(): Promise<string> {
@@ -18,11 +18,11 @@ export class SpotifyService {
 
     const cachedToken = await this.redisCache.get(cacheKey);
     if (cachedToken) {
-      this.logger.debug('Using cached Spotify token');
+      this.logger.debugBegin('Using cached Spotify token');
       return cachedToken;
     }
 
-    this.logger.debug('Fetching new Spotify token...');
+    this.logger.debugBegin('Fetching new Spotify token...');
     const auth = Buffer.from(
       `${Environment.SPOTIFY_CLIENT_ID}:${Environment.SPOTIFY_CLIENT_SECRET}`,
     ).toString('base64');

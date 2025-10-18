@@ -2,22 +2,12 @@ import { Module } from '@nestjs/common';
 
 import { HealthModule } from './health/health.module';
 import { KaraokeModule } from './karaoke/karaoke.module';
-import { LoggerModule } from './shared/utils/logger/logger.module';
-import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
-import { JSendInterceptor } from './shared/utils/jsend/jsend.interceptor';
-import { JSendExceptionFilter } from './shared/utils/jsend/jsend.exception.filter';
+import { AuthModule } from './auth/auth.module';
+import { ValidatorUtils } from './shared/utils/validator.utils';
 
 @Module({
-  imports: [LoggerModule, HealthModule, KaraokeModule],
-  providers: [
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: JSendInterceptor,
-    },
-    {
-      provide: APP_FILTER,
-      useClass: JSendExceptionFilter,
-    },
-  ],
+  imports: [HealthModule, KaraokeModule, AuthModule],
+  providers: [ValidatorUtils],
+  exports: [ValidatorUtils],
 })
 export class AppModule {}
