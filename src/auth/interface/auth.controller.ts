@@ -7,7 +7,7 @@ export class AuthController {
   constructor(private readonly issueTokenUseCase: IssueTokenUseCase) {}
 
   @Post('token')
-  async issueToken(@Body() issueTokeDto: IssueTokenDto) {
-    return this.issueTokenUseCase.execute(issueTokeDto);
+  async issueToken(@Body() issueTokenDto: IssueTokenDto) {
+    return this.issueTokenUseCase.execute(issueTokenDto);
   }
 }

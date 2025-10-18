@@ -20,30 +20,28 @@ export class AuthGuard implements CanActivate {
 
     const token = this.extractTokenFromHeader(request);
     if (!token) {
-      throw new UnauthorizedException(
-        JSendDTO.fail({ message: 'Missing or invalid Authorization header' }),
+      throw new BusinessError(
+        'Missing or invalid Authorization header',
+        HttpStatus.UNAUTHORIZED,
       );
     }
 
     const isValidToken = await this.jwtService.verifyToken(token);
     if (!isValidToken) {
-      throw new UnauthorizedException(
-        JSendDTO.fail({ message: 'Invalid or expired token' }),
+      throw new BusinessError(
+        'Invalid or expired token',
+        HttpStatus.UNAUTHORIZED,
       );
     }
 
     const deviceId = this.jwtService.extractDeviceId(token);
     if (!deviceId) {
-      /*throw new UnauthorizedException(
-        JSendDTO.fail({ message: 'Invalid token payload' }),
-      );*/
       throw new BusinessError(
         'Invalid token payload: missing deviceId',
         HttpStatus.UNAUTHORIZED,
       );
     }
 
-    // Crear y adjuntar el DTO al request
     request.user = new AuthenticatedUserDTO(deviceId);
     return true;
   }

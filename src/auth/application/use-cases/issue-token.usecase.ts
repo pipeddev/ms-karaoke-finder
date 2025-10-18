@@ -14,7 +14,7 @@ export class IssueTokenUseCase {
   ) {}
 
   async execute(dto: IssueTokenDto) {
-    await this.validatorUtils.validateOrThrowBussinessError(dto);
+    await this.validatorUtils.validateOrThrowBusinessError(dto);
     const device = new DeviceEntity(dto.deviceId);
     const token = await this.authRepository.issueToken(device);
     return JSendDTO.success({ token });

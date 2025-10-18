@@ -5,7 +5,7 @@ import { BusinessError, MessageErrorMap } from '../error/business.error';
 
 @Injectable()
 export class ValidatorUtils {
-  async validateOrThrowBussinessError(object: BaseDTO): Promise<void> {
+  async validateOrThrowBusinessError(object: BaseDTO): Promise<void> {
     const errors = await validate(object);
     if (errors.length === 0) {
       return;
@@ -17,7 +17,6 @@ export class ValidatorUtils {
       const field = error.property;
       const message = Object.values(error.constraints || {})
         .map((constraint) => {
-          // Mantener el regex para extraer valores entre corchetes si existen
           const regex = /\[(.*?)\]/;
           const match = regex.exec(constraint);
 

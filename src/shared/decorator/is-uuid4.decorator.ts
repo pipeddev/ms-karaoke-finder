@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import {
   registerDecorator,
   ValidationOptions,
@@ -5,7 +6,6 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { log } from 'console';
 import { validate as uuidValidate, version as uuidVersion } from 'uuid';
 
 @ValidatorConstraint({ name: 'isUUID4', async: false })
@@ -25,7 +25,7 @@ export class IsUUID4Constraint implements ValidatorConstraintInterface {
       // Validar UUID y verificar versión
       return uuidValidate(value) && uuidVersion(value) === 4;
     } catch (error) {
-      log('Error validating UUID4:', error);
+      Logger.error('Error al validar UUIDv4:', error);
       return false;
     }
   }

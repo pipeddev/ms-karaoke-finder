@@ -30,7 +30,6 @@ export class LoggerHelper {
       const message = ToStringUtils.toString(error.messages);
       this.logger.error(`${prefix} - Error: ${message}`);
     } else {
-      console.log('error else', error);
       this.logException(prefix, error);
     }
   }
