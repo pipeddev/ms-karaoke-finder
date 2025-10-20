@@ -3,10 +3,8 @@ import {
   ExecutionContext,
   HttpStatus,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '../../auth/infrastructure/jwt/jwt.service';
-import { JSendDTO } from '../jsend/jsend';
 import { AuthenticatedRequest } from './interfaces/authenticated-request.interface';
 import { AuthenticatedUserDTO } from './dtos/authenticated-user.dto';
 import { BusinessError } from '../error/business.error';

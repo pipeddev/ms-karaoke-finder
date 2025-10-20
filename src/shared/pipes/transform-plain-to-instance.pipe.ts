@@ -16,7 +16,7 @@ export class TransformPlainToInstancePipe implements PipeTransform<unknown> {
     try {
       if (!metatype || typeof metatype !== 'function') return value;
 
-      // Type guard para verificar que metatype es un constructor
+      // Type guard to verify that metatype is a constructor
       if (!this.isConstructor<T>(metatype)) return value;
 
       const object = plainToInstance<T, unknown>(

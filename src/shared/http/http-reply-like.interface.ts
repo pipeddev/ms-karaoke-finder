@@ -4,7 +4,7 @@ export interface HttpReplyLike {
   header(name: string, value: string): this;
   headers(headers: Record<string, string>): this;
   type(contentType: string): this;
-  code(statusCode: number): this; // Específico de Fastify
-  getHeaders(): Record<string, string | string[]>; // Específico de Fastify
-  raw: any; // La respuesta HTTP nativa
+  code(statusCode: number): this;
+  getHeaders(): Record<string, string | string[]>;
+  raw: any;
 }

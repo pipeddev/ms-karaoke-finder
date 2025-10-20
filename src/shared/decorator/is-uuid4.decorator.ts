@@ -11,27 +11,24 @@ import { validate as uuidValidate, version as uuidVersion } from 'uuid';
 @ValidatorConstraint({ name: 'isUUID4', async: false })
 export class IsUUID4Constraint implements ValidatorConstraintInterface {
   validate(value: any): boolean {
-    // Manejar casos de valores undefined/null
     if (value === undefined || value === null) {
       return false;
     }
 
-    // Verificar que sea string
     if (typeof value !== 'string') {
       return false;
     }
 
     try {
-      // Validar UUID y verificar versión
       return uuidValidate(value) && uuidVersion(value) === 4;
     } catch (error) {
-      Logger.error('Error al validar UUIDv4:', error);
+      Logger.error('Error to validate UUIDv4:', error);
       return false;
     }
   }
 
   defaultMessage(args: ValidationArguments): string {
-    return `${args.property} debe ser un UUID versión 4 válido`;
+    return `${args.property} must be a valid UUID version 4`;
   }
 }
 
