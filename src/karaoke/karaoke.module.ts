@@ -5,9 +5,10 @@ import { SearchSongsUC } from './application/use-cases/search-songs.uc';
 import { SpotifyRepository } from './infrastructure/spotify/spotify.repository';
 import { RedisCache } from './infrastructure/cache/redis.cache';
 import { SpotifyService } from './infrastructure/spotify/spotify.service';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [HttpModule],
+  imports: [HttpModule, AuthModule],
   controllers: [KaraokeController],
   providers: [
     SearchSongsUC,
