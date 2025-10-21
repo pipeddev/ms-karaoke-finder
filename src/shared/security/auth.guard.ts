@@ -24,15 +24,15 @@ export class AuthGuard implements CanActivate {
       );
     }
 
-    const isValidToken = await this.jwtService.verifyToken(token);
-    if (!isValidToken) {
+    const decodedPayload = await this.jwtService.verifyToken(token);
+    if (!decodedPayload) {
       throw new BusinessError(
         'Invalid or expired token',
         HttpStatus.UNAUTHORIZED,
       );
     }
 
-    const deviceId = this.jwtService.extractDeviceId(token);
+    const deviceId = decodedPayload.deviceId;
     if (!deviceId) {
       throw new BusinessError(
         'Invalid token payload: missing deviceId',

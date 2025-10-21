@@ -1,15 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService as NestJwtService } from '@nestjs/jwt';
 import { DeviceEntity } from 'src/auth/domain/entities/device.entity';
+import { JwtPayload } from 'src/auth/domain/interface/jwt-payload.interface';
 import { AuthRepository } from 'src/auth/domain/repositories/auth.repository';
 import { LoggerHelper } from 'src/shared/logger/logger';
-
-interface JwtPayload {
-  deviceId: string;
-  type: 'device_access';
-  iat?: number;
-  exp?: number;
-}
 
 @Injectable()
 export class JwtService implements AuthRepository {
@@ -27,19 +21,21 @@ export class JwtService implements AuthRepository {
     return Promise.resolve(token);
   }
 
-  async verifyToken(token: string): Promise<boolean> {
+  async verifyToken(token: string): Promise<JwtPayload | null> {
     try {
       const payload = this.nestJwtService.verify<JwtPayload>(token);
 
-      const status = payload.type === 'device_access' && !!payload.deviceId;
-      return Promise.resolve(status);
+      if (payload.type === 'device_access' && payload.deviceId) {
+        return Promise.resolve(payload);
+      }
+
+      return Promise.resolve(null);
     } catch (error) {
       this.logger.debugError('verifyToken', error as Error);
-      return false;
+      return Promise.resolve(null);
     }
   }
 
-  // Método adicional para extraer el payload completo
   decodeToken(token: string): JwtPayload | null {
     try {
       return this.nestJwtService.verify<JwtPayload>(token);
@@ -48,7 +44,6 @@ export class JwtService implements AuthRepository {
     }
   }
 
-  // Método para extraer solo el deviceId
   extractDeviceId(token: string): string | null {
     const payload = this.decodeToken(token);
     return payload?.deviceId || null;

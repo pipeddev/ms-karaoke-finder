@@ -10,7 +10,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<HttpReplyLike>();
 
-    // Si es BusinessError directamente
     if (exception instanceof BusinessError) {
       const status = exception.statusCode;
       const body = JSendDTO.fail(exception);
@@ -18,7 +17,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       return;
     }
 
-    // Si es GlobalExceptionError
     const error = exception.error as BusinessError | Error;
     if (error instanceof BusinessError) {
       const status = error.statusCode;
@@ -29,7 +27,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     } else {
       const status = 500;
       const body = JSendDTO.error(
-        `Error interno ${exception.id}: ${error.message}`,
+        `Error internal ${exception.id}: ${error.message}`,
       );
 
       exception.logger.logError(exception.prefix, error);

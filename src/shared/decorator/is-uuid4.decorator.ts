@@ -22,7 +22,7 @@ export class IsUUID4Constraint implements ValidatorConstraintInterface {
     try {
       return uuidValidate(value) && uuidVersion(value) === 4;
     } catch (error) {
-      Logger.error('Error to validate UUIDv4:', error);
+      Logger.error(`Error to validate UUIDv4 for value "${value}":`, error);
       return false;
     }
   }
