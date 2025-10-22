@@ -4,14 +4,14 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
-import { JwtService } from '../../auth/infrastructure/jwt/jwt.service';
+import { JwtAuthService } from '../../auth/infrastructure/jwt/jwt-auth.service';
 import { AuthenticatedRequest } from './interfaces/authenticated-request.interface';
 import { AuthenticatedUserDTO } from './dtos/authenticated-user.dto';
 import { BusinessError } from '../error/business.error';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(private readonly jwtAuthService: JwtAuthService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
@@ -24,7 +24,7 @@ export class AuthGuard implements CanActivate {
       );
     }
 
-    const decodedPayload = await this.jwtService.verifyToken(token);
+    const decodedPayload = await this.jwtAuthService.verifyToken(token);
     if (!decodedPayload) {
       throw new BusinessError(
         'Invalid or expired token',

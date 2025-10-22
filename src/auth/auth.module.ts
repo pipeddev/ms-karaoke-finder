@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { Environment } from 'src/shared/config/environment';
-import { JwtService } from './infrastructure/jwt/jwt.service';
+import { JwtAuthService } from './infrastructure/jwt/jwt-auth.service';
 import { AuthController } from './interface/auth.controller';
 import { IssueTokenUseCase } from './application/use-cases/issue-token.usecase';
 import { ValidatorUtils } from 'src/shared/utils/validator.utils';
@@ -19,14 +19,14 @@ import { ValidatorUtils } from 'src/shared/utils/validator.utils';
   ],
   controllers: [AuthController],
   providers: [
-    JwtService,
+    JwtAuthService,
     {
       provide: 'AuthRepository',
-      useClass: JwtService,
+      useClass: JwtAuthService,
     },
     IssueTokenUseCase,
     ValidatorUtils,
   ],
-  exports: [JwtService],
+  exports: [JwtAuthService],
 })
 export class AuthModule {}

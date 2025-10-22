@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { DeviceEntity } from 'src/auth/domain/entities/device.entity';
 import type { AuthRepository } from 'src/auth/domain/repositories/auth.repository';
 import { IssueTokenDto } from 'src/auth/interface/dto/issue-token.dto';
-import { JSendDTO } from 'src/shared/jsend/jsend';
+import { JSendDTO } from 'src/shared/dtos/jsend.dto';
 import { ValidatorUtils } from 'src/shared/utils/validator.utils';
 
 @Injectable()

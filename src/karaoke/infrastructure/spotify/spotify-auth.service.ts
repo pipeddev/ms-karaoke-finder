@@ -6,8 +6,8 @@ import { firstValueFrom } from 'rxjs';
 import { LoggerHelper } from 'src/shared/logger/logger';
 
 @Injectable()
-export class SpotifyService {
-  private readonly logger = new LoggerHelper(SpotifyService.name);
+export class SpotifyAuthService {
+  private readonly logger = new LoggerHelper(SpotifyAuthService.name);
   constructor(
     private readonly httpService: HttpService,
     private readonly redisCache: RedisCache,

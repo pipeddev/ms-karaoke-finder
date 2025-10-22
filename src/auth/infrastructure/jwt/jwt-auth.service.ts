@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService as NestJwtService } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 import { DeviceEntity } from 'src/auth/domain/entities/device.entity';
 import { JwtPayload } from 'src/auth/domain/interface/jwt-payload.interface';
 import { AuthRepository } from 'src/auth/domain/repositories/auth.repository';
 import { LoggerHelper } from 'src/shared/logger/logger';
 
 @Injectable()
-export class JwtService implements AuthRepository {
-  private readonly logger = new LoggerHelper(JwtService.name);
+export class JwtAuthService implements AuthRepository {
+  private readonly logger = new LoggerHelper(JwtAuthService.name);
 
-  constructor(private readonly nestJwtService: NestJwtService) {}
+  constructor(private readonly jwtService: JwtService) {}
 
   issueToken(device: DeviceEntity): Promise<string> {
     const payload: JwtPayload = {
@@ -17,13 +17,13 @@ export class JwtService implements AuthRepository {
       type: 'device_access',
     };
 
-    const token = this.nestJwtService.sign(payload);
+    const token = this.jwtService.sign(payload);
     return Promise.resolve(token);
   }
 
   async verifyToken(token: string): Promise<JwtPayload | null> {
     try {
-      const payload = this.nestJwtService.verify<JwtPayload>(token);
+      const payload = this.jwtService.verify<JwtPayload>(token);
 
       if (payload.type === 'device_access' && payload.deviceId) {
         return Promise.resolve(payload);
@@ -38,7 +38,7 @@ export class JwtService implements AuthRepository {
 
   decodeToken(token: string): JwtPayload | null {
     try {
-      return this.nestJwtService.verify<JwtPayload>(token);
+      return this.jwtService.verify<JwtPayload>(token);
     } catch {
       return null;
     }
