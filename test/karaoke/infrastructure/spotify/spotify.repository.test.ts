@@ -218,9 +218,9 @@ describe('SpotifyRepository', () => {
   });
 });
 
-// Tests para SpotifyMapper usando la implementación real
+// Tests for SpotifyMapper using the real implementation
 describe('SpotifyMapper', () => {
-  // Remover el mock para este describe
+  // Remove the mock for this describe
   beforeAll(() => {
     jest.unmock('src/karaoke/infrastructure/spotify/spotify.mapper');
   });
@@ -278,7 +278,6 @@ describe('SpotifyMapper', () => {
 
       const result = RealMapper.toDomain(spotifyResponse);
 
-      expect(result).toEqual([]);
       expect(result).toEqual([]);
     });
   });
