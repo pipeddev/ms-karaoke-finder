@@ -4,6 +4,8 @@ import { SearchSongsUC } from '../application/use-cases/search-songs.uc';
 import { AuthGuard } from 'src/shared/security/auth.guard';
 import { CurrentUser } from 'src/shared/security/decorator/current-user.decorator';
 import { AuthenticatedUserDTO } from 'src/shared/security/dtos/authenticated-user.dto';
+import { JSendDTO } from 'src/shared/dtos/jsend.dto';
+import { Song } from '../domain/entities/song.entity';
 
 @Controller('songs')
 @UseGuards(AuthGuard)
@@ -15,14 +17,11 @@ export class KaraokeController {
   async search(
     @Query() dto: SearchSongsDto,
     @CurrentUser() user: AuthenticatedUserDTO,
-  ) {
+  ): Promise<JSendDTO<Song[]>> {
     this.logger.debug(
       `User ${user.deviceId} is searching for songs with criteria: ${JSON.stringify(dto)}`,
     );
     const songs = await this.searchSongsUseCase.execute(dto);
-    return {
-      status: 'success',
-      data: { songs },
-    };
+    return JSendDTO.success(songs);
   }
 }

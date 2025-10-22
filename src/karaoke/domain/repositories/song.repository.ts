@@ -1,5 +1,5 @@
 import { Song } from '../entities/song.entity';
 
 export interface SongRepository {
-  searchByArtist(artist: string): Promise<Song[]>;
+  searchByArtist(artist: string, token: string): Promise<Song[]>;
 }

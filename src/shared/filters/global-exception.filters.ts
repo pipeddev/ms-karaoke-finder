@@ -2,7 +2,7 @@ import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { GlobalExceptionError } from '../error/global-exception.error';
 import { HttpReplyLike } from '../http/http-reply-like.interface';
 import { BusinessError } from '../error/business.error';
-import { JSendDTO } from '../jsend/jsend';
+import { JSendDTO } from '../dtos/jsend.dto';
 
 @Catch(GlobalExceptionError, BusinessError)
 export class GlobalExceptionFilter implements ExceptionFilter {
