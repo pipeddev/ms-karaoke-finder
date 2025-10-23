@@ -280,5 +280,114 @@ describe('SpotifyMapper', () => {
 
       expect(result).toEqual([]);
     });
+
+    it('should handle multiple tracks in response', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+      const { SpotifyMapper: RealMapper } = jest.requireActual(
+        'src/karaoke/infrastructure/spotify/spotify.mapper',
+      ) as { SpotifyMapper: typeof SpotifyMapper };
+
+      const spotifyResponse: SpotifyTrackResponse = {
+        tracks: {
+          items: [
+            {
+              id: '1',
+              name: 'Song 1',
+              artists: [{ name: 'Artist 1', id: '1' }],
+              album: {
+                name: 'Album 1',
+                images: [{ url: 'https://image1.jpg', width: 64, height: 64 }],
+                id: 'album1',
+              },
+              preview_url: 'https://preview1.mp3',
+              popularity: 80,
+            },
+            {
+              id: '2',
+              name: 'Song 2',
+              artists: [{ name: 'Artist 2', id: '2' }],
+              album: {
+                name: 'Album 2',
+                images: [{ url: 'https://image2.jpg', width: 64, height: 64 }],
+                id: 'album2',
+              },
+              preview_url: 'https://preview2.mp3',
+              popularity: 75,
+            },
+          ],
+        },
+      };
+
+      const result = RealMapper.toDomain(spotifyResponse);
+
+      expect(result).toHaveLength(2);
+      expect(result[0].id).toBe('1');
+      expect(result[1].id).toBe('2');
+    });
+
+    it('should handle track with empty images array', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+      const { SpotifyMapper: RealMapper } = jest.requireActual(
+        'src/karaoke/infrastructure/spotify/spotify.mapper',
+      ) as { SpotifyMapper: typeof SpotifyMapper };
+
+      const spotifyResponse: SpotifyTrackResponse = {
+        tracks: {
+          items: [
+            {
+              id: '1',
+              name: 'Song',
+              artists: [{ name: 'Artist', id: '1' }],
+              album: {
+                name: 'Album',
+                images: [],
+                id: 'album1',
+              },
+              preview_url: 'https://preview.mp3',
+              popularity: 60,
+            },
+          ],
+        },
+      };
+
+      const result = RealMapper.toDomain(spotifyResponse);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].imageUrl).toBeUndefined();
+    });
+
+    it('should handle track with multiple artists', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+      const { SpotifyMapper: RealMapper } = jest.requireActual(
+        'src/karaoke/infrastructure/spotify/spotify.mapper',
+      ) as { SpotifyMapper: typeof SpotifyMapper };
+
+      const spotifyResponse: SpotifyTrackResponse = {
+        tracks: {
+          items: [
+            {
+              id: '1',
+              name: 'Collaboration',
+              artists: [
+                { name: 'Artist 1', id: '1' },
+                { name: 'Artist 2', id: '2' },
+              ],
+              album: {
+                name: 'Album',
+                images: [{ url: 'https://image.jpg', width: 64, height: 64 }],
+                id: 'album1',
+              },
+              preview_url: 'https://preview.mp3',
+              popularity: 90,
+            },
+          ],
+        },
+      };
+
+      const result = RealMapper.toDomain(spotifyResponse);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].artist).toBe('Artist 1');
+    });
   });
 });
