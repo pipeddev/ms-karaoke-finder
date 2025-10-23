@@ -22,7 +22,17 @@ jobs:
       - name: 📦 Install pnpm
         uses: pnpm/action-setup@v3
         with:
-          version: 8
+          version: 9
+          run_install: false
+
+      - name: 🔍 Check lockfile presence
+        run: |
+          if [ ! -f "pnpm-lock.yaml" ]; then
+            echo "❌ pnpm-lock.yaml not found!"
+            exit 1
+          fi
+          echo "✅ pnpm-lock.yaml found."
+
 
       - name: 📦 Install dependencies
         run: pnpm install --frozen-lockfile
