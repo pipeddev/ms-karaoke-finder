@@ -47,12 +47,12 @@ jobs:
           THRESHOLD=80
           echo "▶️ Running coverage check with threshold $THRESHOLD%"
 
-          COVERAGE=$(grep 'All files' coverage/coverage-summary.json | awk '{print $3}' | tr -d '%' || echo "0")
-          echo "📊 Detected coverage: ${COVERAGE}%"
+          COVERAGE=$(cat coverage/coverage-summary.json | jq '.total.lines.pct')
+          echo "📊 Cobertura actual: ${COVERAGE}%"
 
-          if [ "$COVERAGE" -lt "$THRESHOLD" ]; then
-            echo "❌ Coverage below threshold ($THRESHOLD%). Merge blocked."
+          if (( $(echo "$COVERAGE < $THRESHOLD" | bc -l) )); then
+            echo "❌ Error: La cobertura es ${COVERAGE}%, se requiere al menos ${THRESHOLD}%"
             exit 1
+          else
+            echo "✅ Cobertura aprobada: ${COVERAGE}%"
           fi
-
-          echo "✅ Coverage meets or exceeds threshold ($THRESHOLD%)."
