@@ -46,10 +46,21 @@ jobs:
       - name: 📊 Enforce Minimum Coverage
         run: |
           THRESHOLD=80
-          COVERAGE=$(npx jest --coverage --coverageReporters=text-summary | grep 'All files' | awk '{print $4}' | tr -d '%')
-          echo "Coverage: $COVERAGE%"
+          npx jest --coverage --coverageReporters=text-summary > coverage.txt
+          cat coverage.txt | grep 'All files' || true
+
+          COVERAGE=$(grep 'All files' coverage.txt | awk '{print $3}' | tr -d '%')
+          echo "Detected coverage: ${COVERAGE:-0}%"
+
+          if [ -z "$COVERAGE" ]; then
+            echo "❌ No coverage data found — verify test output."
+            exit 1
+          fi
+
           if [ "$COVERAGE" -lt "$THRESHOLD" ]; then
             echo "❌ Coverage below $THRESHOLD%. Merge blocked."
             exit 1
           fi
+
           echo "✅ Coverage meets threshold."
+
