@@ -33,7 +33,6 @@ jobs:
           fi
           echo "✅ pnpm-lock.yaml found."
 
-
       - name: 📦 Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -46,21 +45,46 @@ jobs:
       - name: 📊 Enforce Minimum Coverage
         run: |
           THRESHOLD=80
-          npx jest --coverage --coverageReporters=text-summary > coverage.txt
-          cat coverage.txt | grep 'All files' || true
+          echo "▶️ Running coverage check with threshold $THRESHOLD%"
 
-          COVERAGE=$(grep 'All files' coverage.txt | awk '{print $3}' | tr -d '%')
-          echo "Detected coverage: ${COVERAGE:-0}%"
+          # Ejecuta Jest con cobertura resumida
+          npx jest --coverage --coverageReporters=text-summary > coverage.txt
+
+          echo "📄 Coverage summary:"
+          cat coverage.txt | grep -E "Statements|All files" || true
+
+          # Detecta cobertura desde "Statements" o "All files"
+          COVERAGE=$(grep -E "Statements|All files" coverage.txt | head -1 | awk '{print $3}' | tr -d '%')
+          echo "📊 Detected coverage: ${COVERAGE:-0}%"
 
           if [ -z "$COVERAGE" ]; then
-            echo "❌ No coverage data found — verify test output."
+            echo "❌ No coverage data found — verify test output format."
             exit 1
           fi
 
-          if [ "$COVERAGE" -lt "$THRESHOLD" ]; then
-            echo "❌ Coverage below $THRESHOLD%. Merge blocked."
+          if [ "$(printf "%.0f" "$COVERAGE")" -lt "$THRESHOLD" ]; then
+            echo "❌ Coverage below threshold ($THRESHOLD%). Merge blocked."
             exit 1
           fi
 
-          echo "✅ Coverage meets threshold."
+          echo "✅ Coverage meets or exceeds threshold ($THRESHOLD%)."
 
+              run: |
+                THRESHOLD=80
+                npx jest --coverage --coverageReporters=text-summary > coverage.txt
+                cat coverage.txt | grep 'All files' || true
+
+                COVERAGE=$(grep 'All files' coverage.txt | awk '{print $3}' | tr -d '%')
+                echo "Detected coverage: ${COVERAGE:-0}%"
+
+                if [ -z "$COVERAGE" ]; then
+                  echo "❌ No coverage data found — verify test output."
+                  exit 1
+                fi
+
+                if [ "$COVERAGE" -lt "$THRESHOLD" ]; then
+                  echo "❌ Coverage below $THRESHOLD%. Merge blocked."
+                  exit 1
+                fi
+
+                echo "✅ Coverage meets threshold ($THRESHOLD%)."
