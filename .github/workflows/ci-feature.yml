@@ -1,14 +1,22 @@
-name: CI - Feature Validation
+name: CI - Validation
 
 on:
   pull_request:
-    branches: [develop]
+    branches:
+      - develop
+      - main
     types: [opened, synchronize, reopened]
 
 jobs:
   quality-check:
     name: 🔍 Validate Lint & Tests
     runs-on: ubuntu-latest
+
+    # ✅ Solo ejecutar si la rama de origen es feature/*, bugfix/* o hotfix/*
+    if: |
+      startsWith(github.head_ref, 'feature/') ||
+      startsWith(github.head_ref, 'bugfix/') ||
+      startsWith(github.head_ref, 'hotfix/')
 
     steps:
       - name: 🧩 Checkout repository
@@ -56,3 +64,19 @@ jobs:
           else
             echo "✅ Cobertura aprobada: ${COVERAGE}%"
           fi
+
+  # 🚫 Mensaje claro cuando la rama no cumple la convención
+  skipped:
+    name: 🚫 Skip Non-Validated Branches
+    runs-on: ubuntu-latest
+    if: |
+      !(
+        startsWith(github.head_ref, 'feature/') ||
+        startsWith(github.head_ref, 'bugfix/') ||
+        startsWith(github.head_ref, 'hotfix/')
+      )
+    steps:
+      - name: ℹ️ Skipped message
+        run: |
+          echo "🚫 CI omitido — rama '${{ github.head_ref }}' no pertenece a feature/*, bugfix/* ni hotfix/*."
+          echo "ℹ️ Este flujo solo valida ramas de desarrollo oficiales."
