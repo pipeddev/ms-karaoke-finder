@@ -1,98 +1,161 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+## 🎤 Karaoke Finder – Microservicio Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+**Karaoke Finder** es un microservicio backend desarrollado con **NestJS** bajo una arquitectura **Clean + Hexagonal**, que permite buscar canciones y playlists utilizando la **API pública de Spotify**, aplicando buenas prácticas de diseño, caching distribuido y validación robusta.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Este servicio está optimizado para ejecución en **Google Cloud Run**, con pipeline CI/CD en **GitHub Actions** que valida calidad, pruebas y cobertura antes de cada merge.
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🧩 Arquitectura del Proyecto
 
-## Project setup
+El proyecto implementa principios de **Domain-Driven Design (DDD)**, **Clean Architecture** y **Hexagonal Architecture**, separando las responsabilidades en capas claras:
 
-```bash
-$ pnpm install
+```
+src/
+├─ auth/                     # Módulo de autenticación (token JWT por dispositivo)
+│   ├─ application/          # Casos de uso
+│   ├─ domain/               # Entidades del dominio
+│   ├─ infrastructure/       # Adaptadores externos (JWT)
+│   └─ interface/            # Controladores y DTOs de entrada/salida
+│
+├─ karaoke/                  # Módulo principal del dominio Karaoke
+│   ├─ application/          # Casos de uso (use-cases)
+│   ├─ domain/               # Entidades y repositorios abstractos
+│   ├─ infrastructure/       # Adaptadores externos (Spotify API, Redis)
+│   └─ interface/            # Controladores HTTP + DTOs
+│
+├─ shared/                   # Utilidades, logger, pipes, filtros, helpers comunes
+│
+├─ app.module.ts             # Módulo raíz de NestJS
+├─ main.ts                   # Bootstrap principal (FastifyAdapter)
+└─ constant.ts               # Constantes globales
 ```
 
-## Compile and run the project
+📘 **Principios aplicados:**
+
+- **Clean Architecture:** cada capa tiene una responsabilidad única.
+- **Hexagonal (Ports & Adapters):** separación entre el dominio y las integraciones externas.
+- **DDD:** el dominio define las reglas, independiente del framework.
+- **Inyección de dependencias:** los adaptadores se proveen a través de interfaces.
+
+---
+
+## 🧠 Diagrama de Arquitectura
+
+![Architecture](https://github.com/pipeddev/ms-karaoke-finder/docs/architecture.png)
+
+---
+
+## 🔀 GitFlow Simplificado
+
+El proyecto sigue un flujo de ramas que prioriza la estabilidad en producción y la validación continua de features antes del merge.
+
+![Gitflow](https://github.com/pipeddev/ms-karaoke-finder/docs/gitflow-model.png)
+
+### 🌿 Ramas activas
+
+- `feature/*` → nuevas funcionalidades
+- `bugfix/*` → correcciones menores
+- `hotfix/*` → correcciones críticas en producción
+- `develop` → entorno de integración
+- `main` → entorno estable / producción
+
+---
+
+## ⚙️ Ejecución Local
+
+### 1️⃣ Requisitos previos
+
+- Node.js ≥ **v22**
+- pnpm ≥ **v9**
+- Spotify API credentials
+- Redis Upstash URL
+
+### 2️⃣ Variables de entorno `.env`
 
 ```bash
-# development
-$ pnpm run start
+APP_NAME=ms-karaoke-finder
+APP_PORT=3000
+APP_ENV=development
 
-# watch mode
-$ pnpm run start:dev
+SPOTIFY_CLIENT_ID=tu_client_id
+SPOTIFY_CLIENT_SECRET=tu_secret
+SPOTIFY_TOKEN_URL=https://accounts.spotify.com/api/token
+SPOTIFY_SEARCH_URL=https://api.spotify.com/v1/search
 
-# production mode
-$ pnpm run start:prod
+REDIS_URL=tu_upstash_url
 ```
 
-## Run tests
+### 3️⃣ Instalación
 
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+pnpm install
+pnpm start:dev
 ```
 
-## Deployment
+La aplicación se ejecutará en:
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+> [http://localhost:3000](http://localhost:3000)
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+---
+
+## 🧪 Calidad y Testing
+
+El proyecto usa **Jest** con cobertura mínima exigida de **80%**
+(validada automáticamente por **GitHub Actions** antes de cada merge).
 
 ```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+pnpm test:cov
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+📄 **Pipeline:** `.github/workflows/ci-feature-validation.yml`
 
-## Resources
+- Lint (ESLint)
+- Tests unitarios
+- Verificación de cobertura mínima (80%)
+- Bloqueo automático de merges si no cumple el umbral ✅
 
-Check out a few resources that may come in handy when working with NestJS:
+---
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## ☁️ Despliegue en Cloud Run (en preparación)
 
-## Support
+- Imágenes Docker optimizadas con Node.js 22 + pnpm
+- Despliegue sin estado en Cloud Run
+- Conexión a Redis Upstash y Spotify API
+- Preparado para integración futura con **Cloud Build** y **Terraform**
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+---
 
-## Stay in touch
+## 🧭 Próximos pasos
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- [ ] Integración CI/CD para `hotfix/*` y `bugfix/*`
+- [ ] Despliegue automático a **Cloud Run (staging)**
+- [ ] Integración con **Firebase Auth** para usuarios móviles
+- [ ] Monitorización con **Cloud Logging** y **Error Reporting**
+- [ ] Documentación API con **Apidog / Swagger**
+- [ ] Métricas Prometheus / OpenTelemetry
+- [ ] Sincronización con **App Android (Karaoke Finder Mobile)**
 
-## License
+---
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## 🧱 Stack Técnico
+
+| Componente          | Descripción             |
+| ------------------- | ----------------------- |
+| **Framework**       | NestJS + Fastify        |
+| **Lenguaje**        | TypeScript              |
+| **Gestor**          | pnpm                    |
+| **Testing**         | Jest + Coverage         |
+| **CI/CD**           | GitHub Actions          |
+| **Cache**           | Upstash Redis           |
+| **API externa**     | Spotify API             |
+| **Infraestructura** | Google Cloud Run        |
+| **Arquitectura**    | DDD + Clean + Hexagonal |
+
+---
+
+## 👨‍💻 Autor
+
+Desarrollado por **Luis Felipe Carrasco (Pipe D Dev)**
+💼 Arquitecto de Software | Cloud Engineer
+🌐 [GitHub @pipeddev](https://github.com/pipeddev)
