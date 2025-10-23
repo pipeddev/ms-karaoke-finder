@@ -1,0 +1,82 @@
+name: CI - Validation
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - main
+    types: [opened, synchronize, reopened]
+
+jobs:
+  quality-check:
+    name: 🔍 Validate Lint & Tests
+    runs-on: ubuntu-latest
+
+    # ✅ Solo ejecutar si la rama de origen es feature/*, bugfix/* o hotfix/*
+    if: |
+      startsWith(github.head_ref, 'feature/') ||
+      startsWith(github.head_ref, 'bugfix/') ||
+      startsWith(github.head_ref, 'hotfix/')
+
+    steps:
+      - name: 🧩 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 📦 Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+          run_install: false
+
+      - name: 🔍 Check lockfile presence
+        run: |
+          if [ ! -f "pnpm-lock.yaml" ]; then
+            echo "❌ pnpm-lock.yaml not found!"
+            exit 1
+          fi
+          echo "✅ pnpm-lock.yaml found."
+
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🧹 Run ESLint
+        run: pnpm lint
+
+      - name: 🧪 Run Jest Tests with Coverage
+        run: pnpm test:cov
+
+      - name: 📊 Enforce Minimum Coverage
+        run: |
+          THRESHOLD=80
+          echo "▶️ Running coverage check with threshold $THRESHOLD%"
+
+          COVERAGE=$(cat coverage/coverage-summary.json | jq '.total.lines.pct')
+          echo "📊 Cobertura actual: ${COVERAGE}%"
+
+          if (( $(echo "$COVERAGE < $THRESHOLD" | bc -l) )); then
+            echo "❌ Error: La cobertura es ${COVERAGE}%, se requiere al menos ${THRESHOLD}%"
+            exit 1
+          else
+            echo "✅ Cobertura aprobada: ${COVERAGE}%"
+          fi
+
+  # 🚫 Mensaje claro cuando la rama no cumple la convención
+  skipped:
+    name: 🚫 Skip Non-Validated Branches
+    runs-on: ubuntu-latest
+    if: |
+      !(
+        startsWith(github.head_ref, 'feature/') ||
+        startsWith(github.head_ref, 'bugfix/') ||
+        startsWith(github.head_ref, 'hotfix/')
+      )
+    steps:
+      - name: ℹ️ Skipped message
+        run: |
+          echo "🚫 CI omitido — rama '${{ github.head_ref }}' no pertenece a feature/*, bugfix/* ni hotfix/*."
+          echo "ℹ️ Este flujo solo valida ramas de desarrollo oficiales."

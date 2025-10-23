@@ -78,6 +78,7 @@ describe('AuthGuard', () => {
 
     it('should throw BusinessError when token payload is missing deviceId', async () => {
       mockRequest.headers = { authorization: 'Bearer valid-token' };
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       jwtAuthService.verifyToken.mockResolvedValue({ type: 'access' } as any);
 
       await expect(authGuard.canActivate(mockExecutionContext)).rejects.toThrow(

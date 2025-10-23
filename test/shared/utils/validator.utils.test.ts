@@ -112,6 +112,7 @@ describe('ValidatorUtils', () => {
       validatorUtils.validateOrThrowBusinessError(dto),
     ).rejects.toMatchObject({
       messages: {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         name: expect.stringContaining('|'),
       },
     });

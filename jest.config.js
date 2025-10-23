@@ -43,7 +43,9 @@ module.exports = {
     '.dto.ts$',
     '.entity.ts$',
   ],
-  coverageDirectory: './coverage',
+  collectCoverage: false,
+  coverageReporters: ['text', 'lcov', 'json-summary'],
+  coverageDirectory: 'coverage',
   coverageThreshold: {
     global: {
       branches: 80,

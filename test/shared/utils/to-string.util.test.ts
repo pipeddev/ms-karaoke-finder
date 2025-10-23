@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { ToStringUtils } from 'src/shared/utils/to-string.util';
 
 describe('ToStringUtils', () => {
@@ -73,9 +75,8 @@ describe('ToStringUtils', () => {
   // Additional tests for the typeName logic
   describe('typeName determination', () => {
     it('should handle objects with null prototype', () => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const nullProtoObj = Object.create(null);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+
       nullProtoObj.test = 'value';
       expect(ToStringUtils.toString(nullProtoObj)).toBe(
         'Object { test: value }',
@@ -110,9 +111,8 @@ describe('ToStringUtils', () => {
       const protoWithoutConstructor = {};
       Object.setPrototypeOf(protoWithoutConstructor, null);
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const obj = Object.create(protoWithoutConstructor);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+
       obj.test = 'value';
 
       expect(ToStringUtils.toString(obj)).toBe('Object { test: value }');
