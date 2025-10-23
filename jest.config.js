@@ -43,6 +43,8 @@ module.exports = {
     '.dto.ts$',
     '.entity.ts$',
   ],
+  collectCoverage: true,
+  coverageReporters: ['text', 'text-summary'],
   coverageDirectory: './coverage',
   coverageThreshold: {
     global: {
