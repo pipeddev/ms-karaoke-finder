@@ -1,5 +1,7 @@
 ## 🎤 Karaoke Finder – Microservicio Backend
 
+[![CI - Feature Validation](https://github.com/pipeddev/ms-karaoke-finder/actions/workflows/ci-feature-validation.yml/badge.svg)](https://github.com/pipeddev/ms-karaoke-finder/actions/workflows/ci-feature-validation.yml)
+
 **Karaoke Finder** es un microservicio backend desarrollado con **NestJS** bajo una arquitectura **Clean + Hexagonal**, que permite buscar canciones y playlists utilizando la **API pública de Spotify**, aplicando buenas prácticas de diseño, caching distribuido y validación robusta.
 
 Este servicio está optimizado para ejecución en **Google Cloud Run**, con pipeline CI/CD en **GitHub Actions** que valida calidad, pruebas y cobertura antes de cada merge.
