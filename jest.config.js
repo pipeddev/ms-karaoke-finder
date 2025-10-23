@@ -44,8 +44,8 @@ module.exports = {
     '.entity.ts$',
   ],
   collectCoverage: true,
-  coverageReporters: ['text', 'text-summary'],
-  coverageDirectory: './coverage',
+  coverageReporters: ['text', 'lcov', 'json-summary'],
+  coverageDirectory: 'coverage',
   coverageThreshold: {
     global: {
       branches: 80,
