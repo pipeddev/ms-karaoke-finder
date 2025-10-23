@@ -44,7 +44,7 @@ src/
 
 ## 🧠 Diagrama de Arquitectura
 
-![Architecture](https://github.com/pipeddev/ms-karaoke-finder/docs/architecture.png)
+![Architecture](https://github.com/pipeddev/ms-karaoke-finder/blob/develop/docs/architecture.png)
 
 ---
 
@@ -52,7 +52,7 @@ src/
 
 El proyecto sigue un flujo de ramas que prioriza la estabilidad en producción y la validación continua de features antes del merge.
 
-![Gitflow](https://github.com/pipeddev/ms-karaoke-finder/docs/gitflow-model.png)
+![Gitflow](https://github.com/pipeddev/ms-karaoke-finder/blob/develop/docs/gitflow-model.png)
 
 ### 🌿 Ramas activas
 
