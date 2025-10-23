@@ -46,6 +46,16 @@ describe('KaraokeController', () => {
     jest.clearAllMocks();
   });
 
+  describe('initialization', () => {
+    it('should be defined', () => {
+      expect(controller).toBeDefined();
+    });
+
+    it('should have searchSongsUseCase injected', () => {
+      expect(searchSongsUseCase).toBeDefined();
+    });
+  });
+
   describe('search', () => {
     it('should return songs wrapped in JSendDTO', async () => {
       const searchDto: SearchSongsDto = {
@@ -112,6 +122,38 @@ describe('KaraokeController', () => {
       mockSearchSongsUC.execute.mockRejectedValue(error);
 
       await expect(controller.search(searchDto, user)).rejects.toThrow(error);
+    });
+
+    it('should handle complex search queries', async () => {
+      const searchDto: SearchSongsDto = {
+        query: 'complex query with special chars !@#',
+      } as unknown as SearchSongsDto;
+      const user: AuthenticatedUserDTO = {
+        deviceId: 'device999',
+      } as AuthenticatedUserDTO;
+      const mockSongs: Song[] = [{ id: '3', title: 'Complex Song' } as Song];
+
+      mockSearchSongsUC.execute.mockResolvedValue(mockSongs);
+
+      const result = await controller.search(searchDto, user);
+
+      expect(result).toEqual(JSendDTO.success(mockSongs));
+      expect(result.data).toHaveLength(1);
+    });
+
+    it('should handle null or undefined user deviceId gracefully', async () => {
+      const searchDto: SearchSongsDto = {
+        query: 'test',
+      } as unknown as SearchSongsDto;
+      const user: AuthenticatedUserDTO = {
+        deviceId: undefined,
+      } as unknown as AuthenticatedUserDTO;
+
+      mockSearchSongsUC.execute.mockResolvedValue([]);
+
+      await controller.search(searchDto, user);
+
+      expect(mockSearchSongsUC.execute).toHaveBeenCalledWith(searchDto);
     });
   });
 });
