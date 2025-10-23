@@ -19,10 +19,7 @@ export class TransformPlainToInstancePipe implements PipeTransform<unknown> {
       // Type guard to verify that metatype is a constructor
       if (!this.isConstructor<T>(metatype)) return value;
 
-      const object = plainToInstance<T, unknown>(
-        metatype,
-        value as object,
-      ) as T;
+      const object = plainToInstance<T, unknown>(metatype, value as object);
       return object;
     } catch (error) {
       throw new GlobalExceptionError(this.logger, 'transform', error as Error);

@@ -124,7 +124,7 @@ describe('JwtAuthService', () => {
 
     it('should return null when payload has no deviceId', () => {
       const payload = { type: 'device_access' };
-      jwtService.verify.mockReturnValue(payload as any);
+      jwtService.verify.mockReturnValue(payload);
 
       const result = service.extractDeviceId('valid.token');
 
